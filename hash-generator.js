@@ -1,34 +1,39 @@
-async function loadCryptoLib() {
-    if (window.crypto && window.crypto.subtle) {
-        return;
-    }
-    await import("https://cdnjs.cloudflare.com/ajax/libs/webcrypto-shim/0.1.4/webcrypto-shim.js");
-}
-
-async function sha256(message) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-    return hashHex;
-}
-
 async function findMatchingHash() {
     await loadCryptoLib();
-    
+
     const baseSentence = document.getElementById("baseSentence").value;
     const targetPrefix = document.getElementById("targetPrefix").value;
     let counter = 0;
-    
-    while (true) {
-        const sentence = baseSentence.replace("{}", counter);
-        const hashResult = await sha256(sentence);
-        
-        if (hashResult.startsWith(targetPrefix)) {
-            document.getElementById("result").innerText = `Found a matching sentence: ${sentence}\nHash: ${hashResult}`;
-            break;
+
+    // Change the button text to indicate processing
+    const button = document.querySelector('button');
+    const originalButtonText = button.innerText;
+    button.innerText = 'Searching...';
+    button.disabled = true;  // Disable the button to prevent multiple clicks
+
+    try {
+        while (true) {
+            const sentence = baseSentence.replace("{}", counter);
+            const hashResult = await sha256(sentence);
+
+            if (hashResult.startsWith(targetPrefix)) {
+                document.getElementById("result").innerText = `Found a matching sentence: ${sentence}\nHash: ${hashResult}`;
+                break;
+            }
+
+            // Optionally, for every 1000 iterations, update the user about the current count.
+            if (counter % 1000 === 0) {
+                document.getElementById("result").innerText = `Currently checking count: ${counter}`;
+            }
+
+            counter++;
         }
-        counter++;
+    } catch (err) {
+        console.error(err);
+        document.getElementById("result").innerText = 'An error occurred during the search.';
+    } finally {
+        // Revert button state
+        button.innerText = originalButtonText;
+        button.disabled = false;
     }
 }
