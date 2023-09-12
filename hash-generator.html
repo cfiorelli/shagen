@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHA-256 Hash Generator</title>
+</head>
+<body>
+    <h1>SHA-256 Hash Generator</h1>
+    
+    <p>
+        Base Sentence: 
+        <input type="text" id="baseSentence" value="The SHA256 for this sentence with a counter of {} is: ">
+    </p>
+    <p>
+        Target Prefix: 
+        <input type="text" id="targetPrefix" value="1a2b3c">
+    </p>
+    <button onclick="findMatchingHash()">Find Matching Hash</button>
+    
+    <h2>Results:</h2>
+    <p id="result"></p>
+    
+    <script src="hash-generator.js"></script>
+</body>
+</html>
