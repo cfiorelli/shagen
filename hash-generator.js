@@ -33,3 +33,33 @@ function findMatchingHash() {
       }
     }
 }
+
+// For color representation
+function displayHashColor(hash) {
+  const color = `#${hash.substring(0, 6)}`; // Taking the first 6 characters as HEX color.
+  document.body.style.backgroundColor = color;
+}
+
+function findMatchingHash() {
+    const baseSentence = document.getElementById("baseSentence").value;
+    const targetPrefix = document.getElementById("targetPrefix").value;
+
+    // Create 4 workers
+    for (let i = 0; i < 4; i++) {
+      const worker = new Worker('hashWorker.js');
+      worker.postMessage({ 
+        baseSentence: baseSentence, 
+        targetPrefix: targetPrefix, 
+        start: i * 250000, 
+        end: (i+1) * 250000
+      });
+
+      worker.onmessage = function(e) {
+        const { type, count, hash } = e.data;
+        if (type === 'progress') {
+          document.getElementById("result").innerText = `Count: ${count}, Hash: ${hash}`;
+          displayHashColor(hash);
+        }
+      }
+    }
+}
