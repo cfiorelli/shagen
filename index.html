@@ -10,8 +10,9 @@
     
     <p>
         Base Sentence: 
-        <input type="text" id="baseSentence" value="The SHA256 for this sentence with a counter of {} is: ">
+        <input type="text" id="baseSentence" oninput="liveHash()" value="The SHA256 for this sentence with a counter of {} is: ">
     </p>
+    <p id="liveHashResult"></p>
     <p>
         Target Prefix: 
         <input type="text" id="targetPrefix" value="1a2b3c">
